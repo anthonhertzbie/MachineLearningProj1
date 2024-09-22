@@ -1,11 +1,15 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-import xlrd
+
+compres_strength = 'Concrete compressive strength(MPa, megapascals) '
 
 df_orig = pd.read_excel('concrete+compressive+strength/Concrete_Data.xls')
 df = df_orig.loc[:, df_orig.columns != 'Concrete compressive strength(MPa, megapascals) ']
+
+#normailzing strength for vizualisation
+strength_norm = ((df_orig[compres_strength] - df_orig[compres_strength].min()) /
+            (df_orig[compres_strength].max() - df_orig[compres_strength].min()))
 
 #normalizing the vectors / subtracting the mean
 row_count = len(df.columns)
@@ -14,9 +18,10 @@ average_vector = np.mean(df_vectors, axis=0)
 normalized_df = df_vectors - average_vector
 
 #calculating eigenvalues and eigenvectors with the covariance matrix
-covariance_matrix = (np.dot(np.transpose(normalized_df), normalized_df)) / len(df) - 1
-print(covariance_matrix.shape)
+covariance_matrix = np.cov(normalized_df, rowvar=False)
+
 eigenvalues, eigenvectors = np.linalg.eig(covariance_matrix)
+print(eigenvectors)
 #sorting the eigenvectors
 sorted_indices = np.argsort(eigenvalues)[::-1]
 sorted_eigenvalues = eigenvalues[sorted_indices]
@@ -40,14 +45,15 @@ plt.plot(percentile)
 plt.show()
 
 #projecting onto 3d space
-basis_vectors = eigenvectors[0:3]
+basis_vectors = sorted_eigenvectors[0:3]
+print(basis_vectors[0])
 projected_data = np.dot(normalized_df, np.transpose(basis_vectors))
 x = projected_data[:, 0]
 y = projected_data[:, 1]
 z = projected_data[:, 2]
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(x, y, z)
+ax.scatter(x, y, z, c=strength_norm, cmap='RdBu')
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_zlabel('Z')
@@ -55,11 +61,11 @@ ax.set_title('3D Projection of Data Using Covariance Method')
 plt.show()
 
 #projected onto 2d space
-basis_vectors = eigenvectors[0:2]
+basis_vectors = sorted_eigenvectors[0:2]
 projected_data = np.dot(normalized_df, np.transpose(basis_vectors))
 x = projected_data[:, 0]
 y = projected_data[:, 1]
-plt.scatter(x, y)
+plt.scatter(x, y, c=strength_norm, cmap='RdBu')
 plt.xlabel('X')
 plt.ylabel('Y')
 plt.title('2D Projection of Data Using Covariance Method')
