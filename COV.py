@@ -46,29 +46,31 @@ plt.show()
 
 #projecting onto 3d space
 basis_vectors = sorted_eigenvectors[0:3]
-print(basis_vectors[0])
 projected_data = np.dot(normalized_df, np.transpose(basis_vectors))
 x = projected_data[:, 0]
 y = projected_data[:, 1]
 z = projected_data[:, 2]
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(x, y, z, c=strength_norm, cmap='RdBu')
-ax.set_xlabel('X')
-ax.set_ylabel('Y')
-ax.set_zlabel('Z')
+ax.scatter(x, y, z, c=strength_norm, cmap='RdBu_r')
+ax.set_xlabel('PC1')
+ax.set_ylabel('PC2')
+ax.set_zlabel('PC3')
 ax.set_title('3D Projection of Data Using Covariance Method')
 plt.show()
 
 #projected onto 2d space
-basis_vectors = sorted_eigenvectors[0:2]
-projected_data = np.dot(normalized_df, np.transpose(basis_vectors))
+basis_vectors = sorted_eigenvectors[:, 0:2]
+print(basis_vectors)
+projected_data = np.dot(normalized_df, basis_vectors)
 x = projected_data[:, 0]
 y = projected_data[:, 1]
-plt.scatter(x, y, c=strength_norm, cmap='RdBu')
+plt.scatter(x, y, c=strength_norm, cmap='RdBu_r')
 plt.xlabel('X')
 plt.ylabel('Y')
 plt.title('2D Projection of Data Using Covariance Method')
+cbar = plt.colorbar()
+cbar.set_label('Normalized Concrete Compressive Strength')
 plt.show()
 
 print(basis_vectors.shape)

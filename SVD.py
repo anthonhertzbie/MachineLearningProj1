@@ -64,8 +64,9 @@ ax.set_zlabel('PC3')
 ax.set_title('3D Projection of Data Using SVD')
 plt.show()
 
-#projected onto 2d space
+#projected onto 2d spa ce
 basis_vectors = eigenvectors[:, 0:2]
+print(basis_vectors)
 projected_data = np.dot(normalized_df, basis_vectors)
 x = projected_data[:, 0]
 y = projected_data[:, 1]
