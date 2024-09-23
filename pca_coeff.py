@@ -19,5 +19,5 @@ def find_coeff(normalized_df, attribute_labels):
     plt.ylabel("Component coefficients")
     plt.legend(legendStrs)
     plt.grid()
-    plt.title("NanoNose: PCA Component Coefficients")
+    plt.title("PCA Component Coefficients")
     plt.show()
