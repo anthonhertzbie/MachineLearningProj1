@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from scipy.linalg import svd
 import numpy as np
 
-#Performing SVD using NumPy
+
 def find_coeff(normalized_df, attribute_labels):
     U, S, Vt = np.linalg.svd(normalized_df, full_matrices=False)
     V = Vt.T
@@ -10,7 +10,6 @@ def find_coeff(normalized_df, attribute_labels):
 
     pcs = [0, 1, 2]
     legendStrs = ["PC" + str(e + 1) for e in pcs]
-    # c = ["r", "g", "b"]
     bw = 0.2
     r = np.arange(1, M + 1)
     for i in pcs:
