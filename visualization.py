@@ -51,3 +51,43 @@ def eigenvalue_plot(cumulative_variance, percentile):
     plt.savefig('plots/Explained_variance.png')
     plt.grid()
     plt.show()
+
+
+def find_coeff(normalized_df, attribute_labels):
+    U, S, Vt = np.linalg.svd(normalized_df, full_matrices=False)
+    V = Vt.T
+    N, M = normalized_df.shape
+
+    pcs = [0, 1]
+    legendStrs = ["PC" + str(e + 1) for e in pcs]
+    bw = 0.2
+    r = np.arange(1, M + 1)
+    for i in pcs:
+        plt.bar(r + i * bw, V[:, i], width=bw)
+    plt.xticks(r + bw, attribute_labels)
+    plt.xlabel("Attributes")
+    plt.ylabel("Component coefficients")
+    plt.legend(legendStrs)
+    plt.grid()
+    plt.title("PCA Component Coefficients")
+    plt.show()
+
+
+def histograms(df_vectors, attribute_labels):
+    num_cols = df_vectors.shape[1]
+
+    _, axes = plt.subplots(2, 4, figsize=(12, 6))
+    axes = axes.flatten()
+
+    for col in range(num_cols):
+        col_data = df_vectors[:, col]
+
+        ax = axes[col]
+
+        ax.hist(col_data, bins=8, edgecolor='black') 
+        ax.set_xlabel('Value')
+        ax.set_ylabel('Frequency')
+        ax.set_title(f'Histogram of Attribute {attribute_labels[col]}')
+        
+    plt.tight_layout(pad=2.0)
+    plt.show()

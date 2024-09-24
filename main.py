@@ -2,9 +2,8 @@ import pandas as pd
 import numpy as np
 import COV
 import SVD
-import pca_coeff
 import label
-import dist
+import visualization
 
 compres_strength = 'Concrete compressive strength(MPa, megapascals) '
 df_orig = pd.read_excel('concrete+compressive+strength/Concrete_Data.xls')
@@ -25,7 +24,7 @@ average_vector = np.mean(df_vectors, axis=0)
 normalized_df = (df_vectors - average_vector)
 
 
-pca_coeff.find_coeff(normalized_df, attribute_labels)
-dist.histograms(normalized_df, attribute_labels)
+visualization.find_coeff(normalized_df, attribute_labels)
+visualization.histograms(df_vectors, attribute_labels)
 COV.perform_cov(normalized_df, strength_norm)
 SVD.perform_svd(normalized_df, strength_norm)
