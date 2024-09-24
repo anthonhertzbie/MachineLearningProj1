@@ -86,7 +86,7 @@ def histograms(df_vectors, attribute_labels):
 
         ax.hist(col_data, bins=8, edgecolor='black') 
         ax.set_xlabel('Value')
-        ax.set_ylabel('Number of Observations')
+        ax.set_ylabel('# of Observations')
         ax.set_title(f'Histogram of Attribute {attribute_labels[col]}')
         
     plt.tight_layout(pad=2.0)
