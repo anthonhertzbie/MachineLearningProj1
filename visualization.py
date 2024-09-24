@@ -45,6 +45,7 @@ def eigenvalue_plot(cumulative_variance, percentile):
     # Plot the variance explained
     plt.plot(percentile, 'x-', label="Explained Variance")
     plt.plot(cumulative_variance, 'o--', label="Cumulative Variance")
+    plt.xticks(np.arange(len(percentile)), np.arange(1, len(percentile) + 1))
     plt.xlabel('Principal Component')
     plt.ylabel('Variance Explained')
     plt.legend()
