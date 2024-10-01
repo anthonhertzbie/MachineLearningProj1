@@ -9,8 +9,8 @@ compres_strength = 'Concrete compressive strength(MPa, megapascals) '
 df_orig = pd.read_excel('concrete+compressive+strength/Concrete_Data.xls')
 df = df_orig.loc[:, df_orig.columns != 'Concrete compressive strength(MPa, megapascals) ']
 
-
-attribute_labels = label.label(len(df.columns))
+attribute_labels = ["Cement", "B.F. Slag", "Fly Ash", "Water", "Superplast.", "Coarse Aggr.", "Fine Aggr", "Age"]
+#attribute_labels = label.label(len(df.columns))
 
 
 #normailzing strength for vizualisation
