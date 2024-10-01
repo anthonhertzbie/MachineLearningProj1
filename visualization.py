@@ -19,6 +19,44 @@ def project_to3d(title, normalized_df, sorted_eigenvectors, strength_norm):
     ax.set_title(title)
     plt.savefig(f'plots/{title}.png')
     plt.show()
+
+    df = pd.DataFrame(projected_data)
+    df['normalized_comp_strength'] = strength_norm
+    df.sort_values('normalized_comp_strength', ascending=False, inplace=True)
+    first_20_percent = int(0.20 * len(df))
+    df_first_20_percent = df.iloc[:first_20_percent]
+
+    x = df_first_20_percent[0]
+    y = df_first_20_percent[1]
+    z = df_first_20_percent[2]
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(x, y, z, c='red')
+    ax.set_xlabel('PC1')
+    ax.set_ylabel('PC2')
+    ax.set_zlabel('PC3')
+    plt.title('Plot of Best 20% of Data')
+    plt.savefig(f'plots/best3d.png')
+    plt.show()
+
+    df = pd.DataFrame(projected_data)
+    df['normalized_comp_strength'] = strength_norm
+    df.sort_values('normalized_comp_strength', ascending=True, inplace=True)
+    first_20_percent = int(0.20 * len(df))
+    df_first_20_percent = df.iloc[:first_20_percent]
+    x = df_first_20_percent[0]
+    y = df_first_20_percent[1]
+    z = df_first_20_percent[2]
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(x, y, z, c='blue')
+    ax.set_xlabel('PC1')
+    ax.set_ylabel('PC2')
+    ax.set_zlabel('PC3')
+    plt.title('Plot of Worst 20% of Data')
+    plt.savefig(f'plots/worst3d.png')
+    plt.show()
+
     return basis_vectors
 
 
@@ -41,7 +79,7 @@ def project_to2d(title, cbar_label, normalized_df, eigenvectors, strength_norm):
     df.sort_values('normalized_comp_strength', ascending=False, inplace=True)
     first_20_percent = int(0.20 * len(df))
     df_first_20_percent = df.iloc[:first_20_percent]
-    plt.scatter(df_first_20_percent[0], df_first_20_percent[1], marker='o', linestyle='-', color='b')
+    plt.scatter(df_first_20_percent[0], df_first_20_percent[1], marker='o', linestyle='-', color='r')
     plt.xlabel('PC1')
     plt.ylabel('PC2')
     plt.title('Plot of Best 20% of Data')
