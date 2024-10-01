@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import cm
+from matplotlib.ticker import MaxNLocator
 import pandas as pd
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -152,7 +154,6 @@ def find_coeff(normalized_df, attribute_labels):
     plt.title("PCA Component Coefficients")
     plt.show()
 
-
 def histograms(df_vectors, attribute_labels):
     num_cols = df_vectors.shape[1]
 
@@ -161,13 +162,37 @@ def histograms(df_vectors, attribute_labels):
 
     for col in range(num_cols):
         col_data = df_vectors[:, col]
-
         ax = axes[col]
 
-        ax.hist(col_data, bins=8, edgecolor='black') 
+        # Create a histogram without plotting (to get the bins and counts)
+        counts, bins, patches = ax.hist(col_data, bins=8, edgecolor='black')
+
+        # Calculate the mean of the column data
+        mean = np.mean(col_data)
+
+        # Calculate the bin centers and their distance from the mean
+        bin_centers = 0.5 * (bins[:-1] + bins[1:])
+        distance_from_mean = np.abs(bin_centers - mean)
+
+        # Normalize the distances to map them to a colormap
+        norm = plt.Normalize(vmin=distance_from_mean.min(), vmax=distance_from_mean.max())
+        colormap = cm.get_cmap('coolwarm')
+
+        # Apply the color based on the distance from the mean
+        for dist, patch in zip(distance_from_mean, patches):
+            color = colormap(norm(dist))
+            patch.set_facecolor(color)
+
+        # Increase the number of x-axis intervals automatically with MaxNLocator
+        ax.xaxis.set_major_locator(MaxNLocator(nbins=6))  # Set maximum number of ticks to 10
+        ax.yaxis.set_major_locator(MaxNLocator(nbins=6))  # Set maximum number of ticks to 10
+
+        # Rotate the x-axis labels
+        plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+
         ax.set_xlabel('Value')
         ax.set_ylabel('# of Observations')
-        ax.set_title(f'Histogram of Attribute {attribute_labels[col]}')
-        
+        ax.set_title(f'{attribute_labels[col]}')
+
     plt.tight_layout(pad=2.0)
     plt.show()
