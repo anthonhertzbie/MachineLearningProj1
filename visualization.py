@@ -4,6 +4,7 @@ from matplotlib import cm
 from matplotlib.ticker import MaxNLocator
 import pandas as pd
 from mpl_toolkits.mplot3d import Axes3D
+import seaborn as sns
 
 
 def project_to3d(title, normalized_df, sorted_eigenvectors, strength_norm):
@@ -205,3 +206,14 @@ def histograms(df_vectors, attribute_labels):
 
     plt.tight_layout(pad=2.0)
     plt.show()
+
+def correlation_matrix(normalized_df):
+    df = pd.DataFrame(normalized_df, columns=[f'{i}' for i in range(1, 9)])
+    
+    corrMatrix = df.corr()
+    
+    plt.figure(figsize=(8, 8))
+    sns.heatmap(corrMatrix, annot=True, cmap='coolwarm', linewidths=0.5, xticklabels=df.columns, yticklabels=df.columns)
+    plt.title('Correlation Matrix Heatmap')
+    plt.show()
+

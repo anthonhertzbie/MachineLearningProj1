@@ -26,5 +26,6 @@ normalized_df = (df_vectors - average_vector)
 
 visualization.find_coeff(normalized_df, attribute_labels)
 visualization.histograms(df_vectors, attribute_labels)
+visualization.correlation_matrix(normalized_df)
 #COV.perform_cov(normalized_df, strength_norm)
 SVD.perform_svd(normalized_df, strength_norm)
