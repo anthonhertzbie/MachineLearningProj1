@@ -72,10 +72,13 @@ def project_to3d(title, normalized_df, sorted_eigenvectors, strength_norm):
 
 
 def project_to2d(title, cbar_label, normalized_df, eigenvectors, strength_norm):
+    # Project data to the first two principal components (2D space)
     basis_vectors = eigenvectors[:, 0:2]
     projected_data = np.dot(normalized_df, basis_vectors)
     x = projected_data[:, 0]
     y = projected_data[:, 1]
+
+    # Plot the full scatter plot with color based on strength_norm
     plt.scatter(x, y, c=strength_norm, cmap='RdBu_r')
     plt.xlabel('PC1')
     plt.ylabel('PC2')
@@ -87,33 +90,39 @@ def project_to2d(title, cbar_label, normalized_df, eigenvectors, strength_norm):
     plt.savefig(f'plots/{title}.png')
     plt.show()
 
+    # Create DataFrame from the projected data for easier manipulation
     df = pd.DataFrame(projected_data)
     df['normalized_comp_strength'] = strength_norm
+
+    # Sort the data by strength
     df.sort_values('normalized_comp_strength', ascending=False, inplace=True)
-    first_20_percent = int(0.20 * len(df))
-    df_first_20_percent = df.iloc[:first_20_percent]
-    plt.scatter(df_first_20_percent[0], df_first_20_percent[1], marker='o', linestyle='-', color='r')
+
+    # Split the data into three 33% groups
+    one_third_length = int(0.33 * len(df))
+
+    df_strongest_33 = df.iloc[:one_third_length]  # Strongest 33%
+    df_middle_33 = df.iloc[one_third_length:2*one_third_length]  # Middle 33%
+    df_weakest_33 = df.iloc[2*one_third_length:]  # Weakest 33%
+
+    # Plot all three groups on the same plot with different colors
+    plt.scatter(df_strongest_33[0], df_strongest_33[1], color='r', label='Strongest 33%', marker='o')
+    plt.scatter(df_middle_33[0], df_middle_33[1], color='mediumpurple', label='Middle 33%', marker='o')
+    plt.scatter(df_weakest_33[0], df_weakest_33[1], color='b', label='Weakest 33%', marker='o')
+
+    # Set axis labels and limits
     plt.xlabel('PC1')
     plt.ylabel('PC2')
     plt.xlim(-350, 220)
     plt.ylim(-310, 200)
-    plt.title('Plot of Strongest 20% of Data')
-    plt.savefig(f'plots/best.png')
+
+    # Add a title and a legend to distinguish between the groups
+    plt.title('Full Data Set: Strongest, Middle, and Weakest 33%')
+    plt.legend()
+
+    # Save the combined plot to a file
+    plt.savefig(f'plots/combined_full_data.png')
     plt.show()
 
-    df = pd.DataFrame(projected_data)
-    df['normalized_comp_strength'] = strength_norm
-    df.sort_values('normalized_comp_strength', ascending=True, inplace=True)
-    first_20_percent = int(0.20 * len(df))
-    df_first_20_percent = df.iloc[:first_20_percent]
-    plt.scatter(df_first_20_percent[0], df_first_20_percent[1], marker='o', linestyle='-', color='b')
-    plt.xlabel('PC1')
-    plt.ylabel('PC2')
-    plt.xlim(-350, 220)
-    plt.ylim(-310, 200)
-    plt.title('Plot of Weakest 20% of Data')
-    plt.savefig(f'plots/worst.png')
-    plt.show()
 
 def eigenvalue_plot(cumulative_variance, percentile):
     print("___________________________________________________________________________________________________________")
