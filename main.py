@@ -10,7 +10,6 @@ df_orig = pd.read_excel('concrete+compressive+strength/Concrete_Data.xls')
 df = df_orig.loc[:, df_orig.columns != 'Concrete compressive strength(MPa, megapascals) ']
 
 attribute_labels = ["Cement", "B.F. Slag", "Fly Ash", "Water", "Superplast.", "Coarse Aggr.", "Fine Aggr", "Age"]
-#attribute_labels = label.label(len(df.columns))
 
 
 #normailzing strength for vizualisation
@@ -26,6 +25,6 @@ normalized_df = (df_vectors - average_vector)
 
 visualization.find_coeff(normalized_df, attribute_labels)
 visualization.histograms(df_vectors, attribute_labels)
-visualization.correlation_matrix(normalized_df)
+visualization.correlation_matrix(normalized_df, attribute_labels)
 #COV.perform_cov(normalized_df, strength_norm)
 SVD.perform_svd(normalized_df, strength_norm)

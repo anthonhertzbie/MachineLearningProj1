@@ -207,13 +207,12 @@ def histograms(df_vectors, attribute_labels):
     plt.tight_layout(pad=2.0)
     plt.show()
 
-def correlation_matrix(normalized_df):
-    df = pd.DataFrame(normalized_df, columns=[f'{i}' for i in range(1, 9)])
+def correlation_matrix(normalized_df, attribute_labels):
+    df = pd.DataFrame(normalized_df, columns=attribute_labels)
     
     corrMatrix = df.corr()
     
     plt.figure(figsize=(8, 8))
-    sns.heatmap(corrMatrix, annot=True, cmap='coolwarm', linewidths=0.5, xticklabels=df.columns, yticklabels=df.columns)
+    sns.heatmap(corrMatrix, annot=True, cmap='coolwarm', linewidths=0.5, xticklabels=attribute_labels, yticklabels=attribute_labels)
     plt.title('Correlation Matrix Heatmap')
     plt.show()
-
