@@ -215,4 +215,5 @@ def correlation_matrix(normalized_df, attribute_labels):
     plt.figure(figsize=(8, 8))
     sns.heatmap(corrMatrix, annot=True, cmap='coolwarm', linewidths=0.5, xticklabels=attribute_labels, yticklabels=attribute_labels)
     plt.title('Correlation Matrix Heatmap')
+    plt.subplots_adjust(bottom=0.2)
     plt.show()
