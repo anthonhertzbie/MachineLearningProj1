@@ -4,7 +4,7 @@ import SVD
 import visualization
 
 compres_strength = 'Concrete compressive strength(MPa, megapascals) '
-df_orig = pd.read_excel('concrete+compressive+strength/Concrete_Data.xls')
+df_orig = pd.read_excel('../concrete+compressive+strength/Concrete_Data.xls')
 df = df_orig.loc[:, df_orig.columns != 'Concrete compressive strength(MPa, megapascals) ']
 
 attribute_labels = ["Cement", "B.F. Slag", "Fly Ash", "Water", "Superplast.", "Coarse Aggr.", "Fine Aggr", "Age"]
@@ -29,4 +29,3 @@ visualization.find_coeff(standardized_df, attribute_labels)
 visualization.histograms(df_pre, attribute_labels)
 visualization.correlation_matrix(df_pre, attribute_labels)
 SVD.perform_svd(standardized_df, strength_norm)
-
