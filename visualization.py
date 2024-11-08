@@ -7,9 +7,9 @@ from mpl_toolkits.mplot3d import Axes3D
 import seaborn as sns
 
 
-def project_to3d(title, normalized_df, sorted_eigenvectors, strength_norm):
+def project_to3d(title, df, sorted_eigenvectors, strength_norm):
     basis_vectors = sorted_eigenvectors[:, 0:3]
-    projected_data = np.dot(normalized_df, basis_vectors)
+    projected_data = np.dot(df, basis_vectors)
     x = projected_data[:, 0]
     y = projected_data[:, 1]
     z = projected_data[:, 2]
@@ -19,9 +19,9 @@ def project_to3d(title, normalized_df, sorted_eigenvectors, strength_norm):
     ax.set_xlabel('PC1')
     ax.set_ylabel('PC2')
     ax.set_zlabel('PC3')
-    ax.set_xlim(-350, 220)
-    ax.set_ylim(-310, 200)
-    ax.set_zlim(-300, 250)
+    # ax.set_xlim(-350, 220)
+    # ax.set_ylim(-310, 200)
+    # ax.set_zlim(-300, 250)
     ax.set_title(title)
     plt.savefig(f'plots/{title}.png')
     plt.show()
@@ -41,11 +41,11 @@ def project_to3d(title, normalized_df, sorted_eigenvectors, strength_norm):
     ax.set_xlabel('PC1')
     ax.set_ylabel('PC2')
     ax.set_zlabel('PC3')
-    ax.set_xlim(-350, 220)
-    ax.set_ylim(-310, 200)
-    ax.set_zlim(-300, 250)
+    # ax.set_xlim(-350, 220)
+    # ax.set_ylim(-310, 200)
+    # ax.set_zlim(-300, 250)
     plt.title('Plot of Strongest 20% of Data')
-    plt.savefig(f'plots/best3d.png')
+    plt.savefig(f'plots/strongest_20.png')
     plt.show()
 
     df = pd.DataFrame(projected_data)
@@ -62,20 +62,20 @@ def project_to3d(title, normalized_df, sorted_eigenvectors, strength_norm):
     ax.set_xlabel('PC1')
     ax.set_ylabel('PC2')
     ax.set_zlabel('PC3')
-    ax.set_xlim(-350, 220)  
-    ax.set_ylim(-310, 200)  
-    ax.set_zlim(-300, 250)  
+    # ax.set_xlim(-350, 220)
+    # ax.set_ylim(-310, 200)
+    # ax.set_zlim(-300, 250)
     plt.title('Plot of Weakest 20% of Data')
-    plt.savefig(f'plots/worst3d.png')
+    plt.savefig(f'plots/3d_weakest_20.png')
     plt.show()
 
     return basis_vectors
 
 
-def project_to2d(title, cbar_label, normalized_df, eigenvectors, strength_norm):
+def project_to2d(title, cbar_label, df, eigenvectors, strength_norm):
     # Project data to the first two principal components (2D space)
     basis_vectors = eigenvectors[:, 0:2]
-    projected_data = np.dot(normalized_df, basis_vectors)
+    projected_data = np.dot(df, basis_vectors)
     x = projected_data[:, 0]
     y = projected_data[:, 1]
 
@@ -83,8 +83,8 @@ def project_to2d(title, cbar_label, normalized_df, eigenvectors, strength_norm):
     plt.scatter(x, y, c=strength_norm, cmap='RdBu_r')
     plt.xlabel('PC1')
     plt.ylabel('PC2')
-    plt.xlim(-350, 220)
-    plt.ylim(-310, 200)
+    # plt.xlim(-350, 220)
+    # plt.ylim(-310, 200)
     plt.title(title)
     cbar = plt.colorbar()
     cbar.set_label(cbar_label)
@@ -113,8 +113,8 @@ def project_to2d(title, cbar_label, normalized_df, eigenvectors, strength_norm):
     # Set axis labels and limits
     plt.xlabel('PC1')
     plt.ylabel('PC2')
-    plt.xlim(-350, 220)
-    plt.ylim(-310, 200)
+    # plt.xlim(-350, 220)
+    # plt.ylim(-310, 200)
 
     # Add a title and a legend to distinguish between the groups
     plt.title('Full Data Set: Strongest, Middle, and Weakest 33%')
@@ -140,15 +140,15 @@ def eigenvalue_plot(cumulative_variance, percentile):
     plt.ylabel('Variance Explained')
     plt.legend()
     plt.title('Explained Variance by Principal Components')
-    plt.savefig('plots/Explained_variance.png')
+    plt.savefig('plots/explained_variance.png')
     plt.grid()
     plt.show()
 
 
-def find_coeff(normalized_df, attribute_labels):
-    U, S, Vt = np.linalg.svd(normalized_df, full_matrices=False)
+def find_coeff(df, attribute_labels):
+    U, S, Vt = np.linalg.svd(df, full_matrices=False)
     V = Vt.T
-    N, M = normalized_df.shape
+    N, M = df.shape
 
     pcs = [0, 1, 2]
     legendStrs = ["PC" + str(e + 1) for e in pcs]
@@ -162,9 +162,12 @@ def find_coeff(normalized_df, attribute_labels):
     plt.legend(legendStrs)
     plt.grid()
     plt.title("PCA Component Coefficients")
+    plt.savefig(f'plots/pca_coefficients.png')
     plt.show()
 
-def histograms(df_vectors, attribute_labels):
+def histograms(df, attribute_labels):
+    df_vectors = df.to_numpy()
+    print(df.head())
     num_cols = df_vectors.shape[1]
 
     _, axes = plt.subplots(2, 4, figsize=(12, 6))
@@ -205,15 +208,38 @@ def histograms(df_vectors, attribute_labels):
         ax.set_title(f'{attribute_labels[col]}')
 
     plt.tight_layout(pad=2.0)
+    plt.savefig(f'plots/histograms.png')
     plt.show()
 
-def correlation_matrix(normalized_df, attribute_labels):
-    df = pd.DataFrame(normalized_df, columns=attribute_labels)
+
+def correlation_matrix(df, attribute_labels):
     
-    corrMatrix = df.corr()
+    # Filter only numeric columns
+    numeric_df = df.select_dtypes(include=[float, int])
+    print(f"Head {df.head()}")  # Debug: Check numeric shape
     
+    # Calculate correlation matrix
+    corrMatrix = numeric_df.corr()
+    print("Correlation matrix:\n", corrMatrix)  # Debug: Print correlation matrix
+
+    # Check if correlation matrix is valid (not empty)
+    if corrMatrix.shape[0] <= 1:
+        print("Insufficient data for correlation matrix. At least two numeric columns are required.")
+        return
+
+    # Plot the heatmap
     plt.figure(figsize=(8, 8))
-    sns.heatmap(corrMatrix, annot=True, cmap='coolwarm', linewidths=0.5, xticklabels=attribute_labels, yticklabels=attribute_labels)
+    sns.heatmap(
+        corrMatrix,
+        annot=True,
+        cmap='coolwarm',
+        linewidths=0.5,
+        xticklabels=attribute_labels,
+        yticklabels=attribute_labels
+    )
     plt.title('Correlation Matrix Heatmap')
     plt.subplots_adjust(bottom=0.2)
+
+    # Save and show plot
+    plt.savefig('plots/correlation_matrix.png')
     plt.show()

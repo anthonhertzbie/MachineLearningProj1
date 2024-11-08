@@ -1,30 +1,39 @@
 import pandas as pd
-import numpy as np
-import COV
-import SVD
-import label
-import visualization
+from sklearn.preprocessing import StandardScaler
+import SVD, visualization
 
-compres_strength = 'Concrete compressive strength(MPa, megapascals) '
-df_orig = pd.read_excel('concrete+compressive+strength/Concrete_Data.xls')
-df = df_orig.loc[:, df_orig.columns != 'Concrete compressive strength(MPa, megapascals) ']
+def preprocess(df):
+    scaler = StandardScaler()
+
+    df_log_norm_std = scaler.fit_transform(df)
+    return pd.DataFrame(df_log_norm_std, columns=df.columns)
+
 
 attribute_labels = ["Cement", "B.F. Slag", "Fly Ash", "Water", "Superplast.", "Coarse Aggr.", "Fine Aggr", "Age"]
+compress_strength = "Concrete compressive strength(MPa, megapascals) "
 
 
-#normailzing strength for vizualisation
-strength_norm = ((df_orig[compres_strength] - df_orig[compres_strength].min()) /
-                 (df_orig[compres_strength].max() - df_orig[compres_strength].min()))
+if __name__ == "__main__":
+    # load data
+    df_orig = pd.read_excel("concrete+compressive+strength/Concrete_Data.xls")
 
-#normalizing the vectors / subtracting the mean
-row_count = len(df.columns)
-df_vectors = df.to_numpy()
-average_vector = np.mean(df_vectors, axis=0)
-normalized_df = (df_vectors - average_vector)
+    #normailzing strength for vizualisation
+    strength_norm = ((df_orig[compress_strength] - df_orig[compress_strength].min()) /
+                    (df_orig[compress_strength].max() - df_orig[compress_strength].min()))
 
+    # use only attributes for std
+    df_attributes = df_orig.loc[:, df_orig.columns != compress_strength]
 
-visualization.find_coeff(normalized_df, attribute_labels)
-visualization.histograms(df_vectors, attribute_labels)
-visualization.correlation_matrix(normalized_df, attribute_labels)
-#COV.perform_cov(normalized_df, strength_norm)
-SVD.perform_svd(normalized_df, strength_norm)
+    # We add 1 to avoid negative numbers
+    df_preproc = preprocess(df_attributes)
+
+    print(df_preproc.head())
+    # visualization
+    visualization.find_coeff(df_preproc, attribute_labels)
+    print(df_preproc.head())
+    visualization.histograms(df_preproc, attribute_labels)
+    print(df_preproc.head())
+    visualization.correlation_matrix(df_preproc, attribute_labels)
+
+    #
+    SVD.perform_svd(df_preproc, strength_norm)
